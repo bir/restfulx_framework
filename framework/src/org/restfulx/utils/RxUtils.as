@@ -309,10 +309,12 @@ package org.restfulx.utils {
         return RxUtils.getResourcePathPrefix(object) + 
           Rx.models.state.controllers[fqn] + "." + suffix;
       
-      for each (var resource:Object in nestedBy) {
-        result += Rx.models.state.controllers[getQualifiedClassName(resource)] + 
-          "/" + resource["id"] + "/";
-      }
+			for each (var resource:Object in nestedBy) {
+				if (resource == null)
+					continue;
+				// TODO: HACK WCFjson
+				result += Rx.models.state.controllers[getQualifiedClassName(resource)] + "(" + resource["id"] + ")/";
+			}
       
       return RxUtils.getResourcePathPrefix(object) + result +
         Rx.models.state.controllers[fqn] + "." + suffix;
@@ -328,6 +330,9 @@ package org.restfulx.utils {
      * 
      */
     public static function addObjectIdToResourceURL(url:String, object:Object, suffix:String = "fxml"):String {
+			// TODO: HACK WCFjson
+			if (suffix == "$format=json")
+				return url.replace("?" + suffix, "") + "(" + object["id"] + ")?" + suffix;
       return url.replace("." + suffix, "") + "/" + object["id"] + "." + suffix;
     }
         

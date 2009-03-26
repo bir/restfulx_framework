@@ -22,6 +22,7 @@
  * Redistributions of files must retain the above copyright notice.
  ******************************************************************************/
 package org.restfulx.models {
+  import flash.utils.getQualifiedClassName;
   import flash.events.EventDispatcher;
   
   import org.restfulx.Rx;
@@ -141,6 +142,13 @@ package org.restfulx.models {
      */
     override public function toString():String {
       return this[_label] == null ? "" : this[_label].toString();
+    }
+    /**
+     * Easy access to unique object Id
+     */
+    [Ignored]
+    public function get uniqueId():String {
+    	return getQualifiedClassName(this) + "." + this.id;
     }
   }
 }

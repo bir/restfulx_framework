@@ -64,7 +64,7 @@ package org.restfulx.services.mock {
 
     public override function index(object:Object, responder:IResponder, metadata:Object = null, nestedBy:Array = null):void {
       var fqn:String = getQualifiedClassName(object);
-      var controllerName:String = state.controllers[fqn];
+			var controllerName:String = Rx.models.state.controllers[fqn];
       
       Rx.log.debug("attempting to index: " + fqn + ", mapped to: " + controllerName);
       responder.result(new ResultEvent(ResultEvent.RESULT, false, false, data[controllerName]));

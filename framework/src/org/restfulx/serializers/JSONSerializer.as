@@ -52,6 +52,9 @@ package org.restfulx.serializers {
       return JSON.encode(result);  
     }
 
+		protected final function $marshall(object:Object, recursive:Boolean = false):Object {
+			return super.marshall(object, recursive);
+		}
     /**
      *  @inheritDoc
      */
@@ -77,7 +80,7 @@ package org.restfulx.serializers {
     }
     
     // can digest both ActiveRecord-like JSON and CouchDB-like JSON
-    private function unmarshallJSONArray(instances:Array, disconnected:Boolean = false):Array {
+    protected function unmarshallJSONArray(instances:Array, disconnected:Boolean = false):Array {
       if (!instances || !instances.length) return instances;
       
       var result:TypedArray = new TypedArray;
@@ -89,7 +92,7 @@ package org.restfulx.serializers {
       return result;
     }
     
-    private function unmarshallJSONObject(source:Object, disconnected:Boolean = false):Object {
+    protected function unmarshallJSONObject(source:Object, disconnected:Boolean = false):Object {
       if (!source.hasOwnProperty("id") && !source.hasOwnProperty("_id")) {
         // ActiveRecord-like JSON array with element names as object keys
         for (var prop:String in source) {
@@ -106,7 +109,10 @@ package org.restfulx.serializers {
       return super.unmarshall(source, disconnected);
     }
     
-    private function convertProperties(instance:Object):Object {
+		final protected function $unmarshall(object:Object, disconnected:Boolean = false):Object {
+			return super.unmarshall(object, disconnected);
+		}
+    protected function convertProperties(instance:Object):Object {
       for each (var prop:Object in [{"_id" : "id"}, {"etag" : "id"}, {"_rev" : "rev"}, {"ruby_class" : "clazz"},
         {"couchrest-type" : "clazz"}]) {
         for (var key:String in prop) {

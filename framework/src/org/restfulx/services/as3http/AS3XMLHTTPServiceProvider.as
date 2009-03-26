@@ -42,6 +42,7 @@ package org.restfulx.services.as3http {
   import org.restfulx.Rx;
   import org.restfulx.collections.ModelsCollection;
   import org.restfulx.controllers.ServicesController;
+	import org.restfulx.serializers.ISerializer;
   import org.restfulx.serializers.XMLSerializer;
   import org.restfulx.services.UndoRedoResponder;
   import org.restfulx.services.http.XMLHTTPServiceProvider;
@@ -59,18 +60,21 @@ package org.restfulx.services.as3http {
     
     protected var contentType:String;
                     
+		override protected function get serializer():ISerializer {
+			if (!_serializer)
+				_serializer = new XMLSerializer();
+			return _serializer;
+		}
     /**
      * @param httpRootUrl root URL that this service provider will prefix to all requests.
      *  By default this will be equal to Rx.httpRootUrl parameter
      */
     public function AS3XMLHTTPServiceProvider(httpRootUrl:String = null) {
-      state = Rx.models.state;
       if (httpRootUrl == null) {
         rootUrl = Rx.httpRootUrl;
       } else {
         rootUrl = httpRootUrl;
       }
-      serializer = new XMLSerializer;
       contentType = "application/xml";
     }
 

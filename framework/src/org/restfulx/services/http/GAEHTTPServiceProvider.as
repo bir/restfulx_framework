@@ -25,6 +25,7 @@ package org.restfulx.services.http {
   import org.restfulx.Rx;
   import org.restfulx.controllers.ServicesController;
   import org.restfulx.serializers.GAEXMLSerializer;
+	import org.restfulx.serializers.ISerializer;
   
   /**
    * HTTPService based GAE XML-over-HTTP service provider.
@@ -36,13 +37,17 @@ package org.restfulx.services.http {
     /** service id */
     public static const ID:int = ServicesController.generateId();
     
+		override protected function get serializer():ISerializer {
+			if (!_serializer)
+				_serializer = new GAEXMLSerializer();
+			return _serializer;
+		}
     /**
      * @param httpRootUrl root URL that this service provider will prefix to all requests.
      *  By default this will be equal to Rx.httpRootUrl parameter
      */
     public function GAEHTTPServiceProvider(httpRootUrl:String = null) {
       super(httpRootUrl);
-      serializer = new GAEXMLSerializer;
       urlSuffix = "xml";
     }
 

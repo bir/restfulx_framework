@@ -212,6 +212,10 @@ package org.restfulx.serializers {
         } else if (isNestedObject && !disconnected) {
           if (ObjectUtil.hasMetadata(object, targetName, "HasOne") ||
             ObjectUtil.hasMetadata(object, targetName, "BelongsTo")) {
+            	// TODO: HACK - WCFjson
+            	// deferred object stacks are worthless
+            	if (attribute.hasOwnProperty("__deferred"))
+            		return;
             var nestedRef:Object = unmarshallObject(attribute, disconnected, targetType);
             object[targetName] = nestedRef;
           }

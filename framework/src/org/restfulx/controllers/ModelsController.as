@@ -40,6 +40,7 @@ package org.restfulx.controllers {
   import org.restfulx.services.ServiceResponder;
   import org.restfulx.utils.ModelsMetadata;
   import org.restfulx.utils.RxUtils;
+  import org.restfulx.utils.TypedArray;
 
   /**
    * Provides high level CRUD functionality. This class is responsible
@@ -227,6 +228,19 @@ package org.restfulx.controllers {
       }
     }
     
+    public function indexAllShown(... models):void {
+      for each (var model:Class in models) {
+        index(model, markShown);
+      }
+    }
+	private function markShown(data:TypedArray):void {
+		var shown:ArrayCollection = ArrayCollection(Rx.models.state.shown[data.itemType]);
+		for each(var item:Object in data) {
+			if (!shown.contains(item["id"])) {
+				shown.addItem(item["id"]);
+			}
+		}
+	}    
     /**
      * Perform REST show operation.
      *  

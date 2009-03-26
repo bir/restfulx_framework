@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.restfulx.services.as3http {
   import org.restfulx.controllers.ServicesController;
+	import org.restfulx.serializers.ISerializer;
   import org.restfulx.serializers.JSONSerializer;
   
   /**
@@ -35,13 +36,17 @@ package org.restfulx.services.as3http {
     /** service id */
     public static const ID:int = ServicesController.generateId();
 
+		override protected function get serializer():ISerializer {
+			if (!_serializer)
+				_serializer = new JSONSerializer();
+			return _serializer;
+		}
     /**
      * @param httpRootUrl root URL that this service provider will prefix to all requests.
      *  By default this will be equal to Rx.httpRootUrl parameter
      */
     public function AS3JSONHTTPServiceProvider(httpRootUrl:String = null) {
       super(httpRootUrl);
-      serializer = new JSONSerializer;
       urlSuffix = "json";
       contentType = "application/json";
     }

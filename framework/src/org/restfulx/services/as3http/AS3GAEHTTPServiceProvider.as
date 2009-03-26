@@ -32,6 +32,7 @@ package org.restfulx.services.as3http {
   import org.restfulx.Rx;
   import org.restfulx.controllers.ServicesController;
   import org.restfulx.serializers.GAEXMLSerializer;
+	import org.restfulx.serializers.ISerializer;
   import org.restfulx.utils.RxUtils;
   
   /**
@@ -44,13 +45,17 @@ package org.restfulx.services.as3http {
     /** service id */
     public static const ID:int = ServicesController.generateId();
     
+		override protected function get serializer():ISerializer {
+			if (!_serializer)
+				_serializer = new GAEXMLSerializer();
+			return _serializer;
+		}
     /**
      * @param httpRootUrl root URL that this service provider will prefix to all requests.
      *  By default this will be equal to Rx.httpRootUrl parameter
      */
     public function AS3GAEHTTPServiceProvider(httpRootUrl:String = null) {
       super(httpRootUrl);
-      serializer = new GAEXMLSerializer;
       urlSuffix = "xml";
     }
 

@@ -45,7 +45,6 @@ package org.restfulx.services.http {
   import org.restfulx.services.UndoRedoResponder;
   import org.restfulx.services.XMLServiceErrors;
   import org.restfulx.utils.BinaryAttachment;
-  import org.restfulx.utils.ModelsMetadata;
   import org.restfulx.utils.MultiPartRequestBuilder;
   import org.restfulx.utils.RxFileReference;
   import org.restfulx.utils.RxUtils;
@@ -64,25 +63,27 @@ package org.restfulx.services.http {
      */
     public var rootUrl:String;
 
-    protected var state:ModelsMetadata;
         
     protected var urlSuffix:String;
     
-    protected var serializer:ISerializer;
+		protected var _serializer:ISerializer;
     
+		protected function get serializer():ISerializer {
+			if (!_serializer)
+				_serializer = Rx.serializers.xml;
+			return _serializer;
+		}
     /**
      * @param httpRootUrl root URL that this service provider will prefix to all requests.
      *  By default this will be equal to Rx.httpRootUrl parameter
      */
     public function XMLHTTPServiceProvider(httpRootUrl:String = null) {
-      state = Rx.models.state;
       if (httpRootUrl == null) {
         rootUrl = Rx.httpRootUrl;
       } else {
         rootUrl = httpRootUrl;
       }
       urlSuffix = "fxml";
-      serializer = Rx.serializers.xml;
     }
     
     /**
@@ -144,8 +145,12 @@ package org.restfulx.services.http {
         
       var urlParams:String = urlEncodeMetadata(metadata);
       if (urlParams != "") {
-        httpService.url += "?" + urlParams;  
-      }
+				// TODO: HACK WCFjson - assumes params only come from metadata
+				if (httpService.url.indexOf("?"))
+					httpService.url += "&" + urlParams;
+				else
+					httpService.url += "?" + urlParams;
+			}
       
       invokeHTTPService(httpService, responder);
     }
@@ -160,9 +165,13 @@ package org.restfulx.services.http {
       httpService.url = RxUtils.addObjectIdToResourceURL(httpService.url, object, urlSuffix);
         
       var urlParams:String = urlEncodeMetadata(metadata);
-      if (urlParams != "") {
-        httpService.url += "?" + urlParams;  
-      }
+			if (urlParams != "") {
+				// TODO: HACK WCFjson - assumes params only come from metadata
+				if (httpService.url.indexOf("?"))
+					httpService.url += "&" + urlParams;
+				else
+					httpService.url += "?" + urlParams;
+			}
       
       invokeHTTPService(httpService, responder);
     }
@@ -176,7 +185,7 @@ package org.restfulx.services.http {
       if (RxUtils.isEmpty(object["id"])) {
         var httpService:HTTPService = getHTTPService(object, nestedBy);
         httpService.method = URLRequestMethod.POST;
-        httpService.request = marshallToVO(object, recursive);
+				httpService.request = marshall(object, recursive);
         sendOrUpload(httpService, object, responder, metadata, nestedBy, recursive, undoRedoFlag, true);
       } else {
         update(object, responder, metadata, nestedBy, recursive, undoRedoFlag);
@@ -192,8 +201,11 @@ package org.restfulx.services.http {
       var httpService:HTTPService = getHTTPService(object, nestedBy);
       httpService.method = URLRequestMethod.POST;
       addHeaders(httpService, {'X-HTTP-Method-Override': 'PUT'});
-      httpService.request = marshallToVO(object, recursive);
-      httpService.request["_method"] = "PUT";
+			httpService.request = marshall(object, recursive);
+			// TODO: HACK WCFjson - don't use form._method if sending json
+			if (!httpService.request is String) {
+				httpService.request["_method"] = "PUT";
+			}
       httpService.url = RxUtils.addObjectIdToResourceURL(httpService.url, object, urlSuffix);
       sendOrUpload(httpService, object, responder, metadata, nestedBy, recursive, undoRedoFlag); 
     }
@@ -207,13 +219,20 @@ package org.restfulx.services.http {
       var httpService:HTTPService = getHTTPService(object, nestedBy);
       httpService.method = URLRequestMethod.POST;
       addHeaders(httpService, {'X-HTTP-Method-Override': 'DELETE'});
-      httpService.request["_method"] = "DELETE";
+  			// TODO: HACK WCFjson - don't use form._method if sending json
+			if (!httpService.request is String) {
+				httpService.request["_method"] = "DELETE";
+			}
       httpService.url = RxUtils.addObjectIdToResourceURL(httpService.url, object, urlSuffix);
       var instance:Object = this;
         
       var urlParams:String = urlEncodeMetadata(metadata);
       if (urlParams != "") {
-        httpService.url += "?" + urlParams;  
+				// TODO: HACK WCF - assumes params only come from metadata
+				if (httpService.url.indexOf("?"))
+					httpService.url += "&" + urlParams;
+				else
+					httpService.url += "?" + urlParams;
       }
 
       Rx.log.debug("sending request to URL:" + httpService.url + 
@@ -284,7 +303,11 @@ package org.restfulx.services.http {
 
       var urlParams:String = urlEncodeMetadata(metadata);
       if (urlParams != "") {
-        request.url += "?" + urlParams;  
+				// TODO: HACK WCF - assumes params only come from metadata
+				if (httpService.url.indexOf("?"))
+					httpService.url += "&" + urlParams;
+				else
+					httpService.url += "?" + urlParams;
       }
       
       file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, function(event:DataEvent):void {
@@ -365,7 +388,11 @@ package org.restfulx.services.http {
 
       var urlParams:String = urlEncodeMetadata(metadata);
       if (urlParams != "") {
-        request.url += "?" + urlParams;  
+				// TODO: HACK WCF - assumes params only come from metadata
+				if (httpService.url.indexOf("?"))
+					httpService.url += "&" + urlParams;
+				else
+					httpService.url += "?" + urlParams;
       } 
       
       var loader:URLLoader = new URLLoader();
@@ -412,7 +439,11 @@ package org.restfulx.services.http {
 
       var urlParams:String = urlEncodeMetadata(metadata);
       if (urlParams != "") {
-        service.url += "?" + urlParams;  
+				// TODO: HACK WCF - assumes params only come from metadata
+				if (service.url.indexOf("?"))
+					service.url += "&" + urlParams;
+				else
+					service.url += "?" + urlParams;
       }
 
       service.addEventListener(ResultEvent.RESULT, function(event:ResultEvent):void {
