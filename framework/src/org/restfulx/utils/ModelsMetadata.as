@@ -38,7 +38,7 @@ package org.restfulx.utils {
   public class ModelsMetadata {
     
 		/** model namespace */
-		public static var modelsNamespace:String;
+		public var modelsNamespace:String;
     /** registered models */
     public var models:Array;
     
@@ -135,7 +135,6 @@ package org.restfulx.utils {
         fqns[defaultSingleName] = fqn;
         fqns[defaultPluralName] = fqn;
 				// TODO: HACK WCFjson - Abstract the namespace - required for .NET
-				modelsNamespace = "MediaEdge.";
 				if (!RxUtils.isEmpty(modelsNamespace)) {
 					fqns[modelsNamespace + controllerName] = fqn;
 					fqns[modelsNamespace + modelName] = fqn;
